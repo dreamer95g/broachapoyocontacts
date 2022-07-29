@@ -1,0 +1,52 @@
+type Role {
+    id: ID!
+    name: String!
+}
+
+type Category {
+    id: ID!
+    name: String!
+}
+
+extend type Mutation {
+    #ROLE
+    createRole(name: String!): Role
+        @create
+        @guard(with: ["api"])
+        @can(ability: "create")
+
+    updateRole(id: ID!, name: String!): Role
+        @update
+        @guard(with: ["api"])
+        @can(ability: "create")
+
+    deleteRole(id: ID!): Role
+        @delete
+        @guard(with: ["api"])
+        @can(ability: "delete")
+
+    #CATEGORY
+    createCategory(name: String!): Category
+        @create
+        @guard(with: ["api"])
+        @can(ability: "create")
+
+    updateCategory(id: ID!, name: String!): Category
+        @update
+        @guard(with: ["api"])
+        @can(ability: "create")
+
+    deleteCategory(id: ID!): Category
+        @delete
+        @guard(with: ["api"])
+        @can(ability: "delete")
+
+    deleteCategories(ids: [Int]): [Category]
+        @guard(with: ["api"])
+        @can(ability: "delete")
+}
+
+extend type Query {
+    categories: [Category] @all @guard(with: ["api"])
+    category(id: ID @eq): Category @find @guard(with: ["api"])
+}

@@ -1,0 +1,60 @@
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    roles: [Role] @belongsToMany
+    images: [Image] @belongsToMany
+}
+
+type BackupResponse {
+    result: String
+}
+
+input UpdateUserInput {
+    id: ID!
+    name: String
+    email: String
+    roles: UserRolesInput
+    images: UserImageInput
+}
+
+input UserRolesInput {
+    connect: [ID!]
+    disconnect: [ID!]
+}
+
+input UserImageInput {
+    connect: [ID!]
+    disconnect: [ID!]
+}
+
+extend type Query {
+    users(orderBy: _ @orderBy(columns: ["created_at"])): [User]
+        @all
+
+        @guard(with: ["api"])
+        @can(ability: "view")
+    user(id: ID @eq): User
+        @find
+
+        @guard(with: ["api"])
+        @can(ability: "view")
+    me: User @guard(with: ["api"]) @auth
+}
+
+extend type Mutation {
+    
+    updateUser(input: UpdateUserInput! @spread): User
+        @update
+        @guard(with: ["api"])
+        @can(ability: "update")
+    
+    deleteUser(id: ID! @rules(apply: ["required"])): User
+        @delete
+        @guard(with: ["api"])
+        @can(ability: "delete")
+
+        backupData(dir: String): BackupResponse @guard(with: ["api"])
+
+        restoreData(backup: String): BackupResponse @guard(with: ["api"])
+}

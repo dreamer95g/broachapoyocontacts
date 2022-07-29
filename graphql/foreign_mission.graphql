@@ -1,0 +1,131 @@
+type ForeignMission {
+    id: ID!
+    name: String!
+    place: String
+    additional_note: String
+    purpose: String
+    ministerial_focus: String
+    capacitation_resources: String
+    resources: String
+    global_opportunities: String
+    representatives: [Contact] @belongsToMany
+    missionaries: [Missionary] @belongsToMany
+    categories: [Category] @belongsToMany
+}
+
+type Missionary {
+    id: ID!
+    name: String!
+    dni: String
+    phone: String
+    email: String
+    family: String
+    place: String
+    ministerial_area: String
+    description: String
+    commitment: String
+    profession: String
+    vocational_category: String
+    ministerial_passion: String
+    interest_group: String
+    additional_note: String
+    trackings: [Tracking] @hasMany
+    images: [Image] @belongsToMany
+    categories: [Category] @belongsToMany
+}
+
+input CreateForeignMissionInput {
+    name: String!
+    place: String
+    additional_note: String
+    purpose: String
+    ministerial_focus: String
+    capacitation_resources: String
+    resources: String
+    global_opportunities: String
+    representatives: RepresentativeForeignInput
+    missionaries: MissionariesForeignInput
+    categories: CategoryForeignInput
+}
+
+input UpdateForeignMissionInput {
+    id: ID!
+    name: String
+    place: String
+    additional_note: String
+    purpose: String
+    ministerial_focus: String
+    capacitation_resources: String
+    resources: String
+    global_opportunities: String
+    representatives: RepresentativeForeignInput
+    missionaries: MissionariesForeignInput
+    categories: CategoryForeignInput
+}
+
+input RepresentativeForeignInput {
+    connect: [ID]
+    disconnect: [ID]
+}
+
+input MissionariesForeignInput {
+    connect: [ID]
+    disconnect: [ID]
+}
+
+input CategoryForeignInput {
+    connect: [ID]
+    disconnect: [ID]
+}
+
+extend type Mutation {
+    # ForeignMission
+    createForeignMission(
+        input: CreateForeignMissionInput! @spread
+    ): ForeignMission @create @guard(with: ["api"]) @can(ability: "create")
+
+    updateForeignMission(
+        input: UpdateForeignMissionInput! @spread
+    ): ForeignMission
+        @update
+        @guard(with: ["api"])
+        @can(ability: "update", find: "id")
+
+    deleteForeignMission(id: ID! @rules(apply: ["required"])): ForeignMission
+        @delete
+        @guard(with: ["api"])
+        @can(ability: "delete", find: "id")
+
+    deleteMissions(ids: [Int]): [ForeignMission]
+        @guard(with: ["api"])
+        @can(ability: "delete")
+}
+
+extend type Query {
+    # ForeignMission
+    foreignMissionWhere(
+        where: _
+            @whereConditions(
+                columns: [
+                    "name"
+                    "place"
+                    "additional_note"
+                    "contact_id"
+                    "purpose"
+                    "ministerial_focus"
+                    "capacitation_resources"
+                    "resources"
+                    "global_opportunities"
+                ]
+            )
+    ): ForeignMission @find @softDeletes @guard(with: ["api"])
+
+    # foreignMissions: [ForeignMission] @all  @guard(with: ["api"])
+
+    foreignMissions: [ForeignMission] @all @softDeletes @guard(with: ["api"])
+
+    foreignMission(id: ID @eq): ForeignMission
+        @find
+        @softDeletes
+        @guard(with: ["api"])
+}

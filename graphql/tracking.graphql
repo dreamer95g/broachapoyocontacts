@@ -1,0 +1,81 @@
+type Tracking {
+    id: ID!
+    tracking_type: String
+    date: Date
+    observation: String
+    pending_task: String
+    ministerial_activity: String
+    contact: Contact @belongsTo
+}
+
+input CreateTrackingInput {
+    tracking_type: String
+    date: Date
+    observation: String
+    pending_task: String
+    ministerial_activity: String
+    contact: ContactTrackingInput
+}
+
+input UpdateTrackingInput {
+    id: ID!
+    tracking_type: String
+    date: Date
+    observation: String
+    pending_task: String
+    ministerial_activity: String
+    contact: ContactTrackingInput
+}
+
+input ContactTrackingInput {
+    connect: ID
+    disconnect: ID
+}
+
+extend type Mutation {
+    # Tracking
+    createTracking(input: CreateTrackingInput! @spread): Tracking
+        @create
+        @guard(with: ["api"])
+        @can(ability: "create")
+
+    updateTracking(input: UpdateTrackingInput! @spread): Tracking
+        @update
+        @guard(with: ["api"])
+        @can(ability: "update", find: "id")
+
+    deleteTracking(id: ID! @rules(apply: ["required"])): Tracking
+        @delete
+        @guard(with: ["api"])
+        @can(ability: "delete", find: "id")
+
+    deleteTrackings(ids: [Int]): [Tracking]
+        @guard(with: ["api"])
+        @can(ability: "delete")
+}
+
+extend type Query {
+    # # Tracking
+    trackingWhere(
+        where: _
+            @whereConditions(
+                columns: [
+                    "id"
+                    "date"
+                    "tracking_type"
+                    "observation"
+                    "pending_task"
+                    "ministerial_activity"
+                ]
+            )
+    ): Tracking @find @guard(with: ["api"])
+
+    # trackings: [Tracking]
+    #     @paginate(type: "paginator", model: "App\\Models\\Tracking")
+    #
+    #     @guard(with: ["api"])
+
+    trackings: [Tracking] @all @guard(with: ["api"])
+
+    tracking(id: ID @eq): Tracking @find @guard(with: ["api"])
+}

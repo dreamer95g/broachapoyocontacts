@@ -1,0 +1,84 @@
+type Organization {
+    id: ID!
+    name: String
+    additional_note: String
+    purpose: String
+    phone: String
+    email: String
+    place: String
+    resources: String
+    relationship: String
+    categories: [Category] @belongsToMany
+    contacts: [Contact] @belongsToMany
+}
+
+input CreateOrganizationInput {
+    name: String
+    additional_note: String
+    purpose: String
+    phone: String
+    email: String
+    place: String
+    resources: String
+    relationship: String
+    categories: CategoryOrganizationInput
+    contacts: ContactOrganizationInput
+}
+
+input UpdateOrganizationInput {
+    id: ID!
+    name: String
+    additional_note: String
+    purpose: String
+    phone: String
+    email: String
+    place: String
+    resources: String
+    relationship: String
+    categories: CategoryOrganizationInput
+    contacts: ContactOrganizationInput
+}
+
+input CategoryOrganizationInput {
+    connect: [ID]
+    disconnect: [ID]
+}
+
+input ContactOrganizationInput {
+    connect: [ID]
+    disconnect: [ID]
+}
+
+extend type Mutation {
+    # Organization
+    createOrganization(input: CreateOrganizationInput! @spread): Organization
+        @create
+        @guard(with: ["api"])
+        @can(ability: "create")
+
+    updateOrganization(input: UpdateOrganizationInput! @spread): Organization
+        @update
+        @guard(with: ["api"])
+        @can(ability: "update", find: "id")
+
+    deleteOrganization(id: ID! @rules(apply: ["required"])): Organization
+        @delete
+        @guard(with: ["api"])
+        @can(ability: "delete", find: "id")
+
+    deleteOrganizations(ids: [Int]): [Organization]
+        @guard(with: ["api"])
+        @can(ability: "delete")
+}
+
+extend type Query {
+    # # Organization
+    organizationWhere(where: _ @whereConditions(columns: ["id"])): Organization
+        @find
+        @guard(with: ["api"])
+
+    organizations: [Organization] @all @guard(with: ["api"])
+
+    # organizations: [Organization] @all
+    organization(id: ID @eq): Organization @find @guard(with: ["api"])
+}
