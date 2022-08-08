@@ -15,13 +15,13 @@
             type="module"
             crossorigin
 
-            {{-- src="https://broachapoyocontacts.herokuapp.com/assets/js/index.d77df0df.js" --}}
-            src="http://broachapoyocontacts.local/assets/js/index.d77df0df.js"
+            {{-- src="https://broachapoyocontacts.herokuapp.com/assets/js/index.ac2bcc38.js" --}}
+            src="http://broachapoyocontacts.local/assets/js/index.ac2bcc38.js"
         ></script>
         <link
             rel="modulepreload"
-            {{-- href="https://broachapoyocontacts.herokuapp.com/assets/js/vendor.6744b809.js" --}}
-            href="http://broachapoyocontacts.local/assets/js/vendor.6744b809.js"
+            {{-- href="https://broachapoyocontacts.herokuapp.com/assets/js/vendor.d9a510f7.js" --}}
+            href="http://broachapoyocontacts.local/assets/js/vendor.d9a510f7.js"
 
         />
         <link
